@@ -41,21 +41,21 @@ void MainWindow::saveFile(const QString& filePath) {
     file.close();
 }
 void MainWindow::openFolder() {
-    QFileSystemModel* fileModel = new QFileSystemModel(this);
+    QFileSystemModel* fileModel2 = new QFileSystemModel(this);
 
     // Set what to show (files + directories)
-    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
+    fileModel2->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
 
     // Set root path (e.g., user home or project folder)
     QString rootPath = QDir::homePath();
-    fileModel->setRootPath(rootPath);
+    fileModel2->setRootPath(rootPath);
 
     // 2. Create the tree view and assign the model
     QTreeView* fileTreeView = new QTreeView(this);
-    fileTreeView->setModel(fileModel);
+    fileTreeView->setModel(fileModel2);
 
     // Set the root index so it shows the directory you want
-    fileTreeView->setRootIndex(fileModel->index(rootPath));
+    fileTreeView->setRootIndex(fileModel2->index(rootPath));
 
     // Optional: hide unwanted columns (e.g., only show file name)
     fileTreeView->setColumnHidden(1, true); // Size column
@@ -63,11 +63,34 @@ void MainWindow::openFolder() {
     fileTreeView->setColumnHidden(3, true); // Date modified
 
     // 3. Create a dock widget to hold the tree
-    QDockWidget* fileDock = new QDockWidget(tr("File Explorer"), this);
-    fileDock->setWidget(fileTreeView);
+    QDockWidget* fileDock2 = new QDockWidget(tr("File Explorer"), this);
+    fileDock2->setWidget(fileTreeView);
 
     // Allow docking on left or right side
-    fileDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    fileDock2->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    addDockWidget(Qt::LeftDockWidgetArea, fileDock2);
+
+    fileDock2->setFloating(true);
+    fileDock2->setMinimumHeight(400);
+    fileDock2->setMaximumHeight(500);
+
+    fileDock2->setMaximumWidth(600);
+    fileDock2->setMinimumWidth(1000);
+
+    connect(fileTreeView, &QTreeView::clicked, this, [this, fileModel2, fileDock2](const QModelIndex &index) {
+        if (!fileModel2->isDir(index)) {
+            QString filePath = fileModel2->filePath(index);
+            // TODO: Load the file content into your editor
+            qDebug() << "File clicked:" << filePath;
+            loadFile(filePath);
+            currentFilePath = filePath;
+            highlighter->rehighlight();
+            ui->CodeEditor->setPlainText(ui->CodeEditor->toPlainText());
+            fileDock2->close();
+
+        }
+    });
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -107,11 +130,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Allow docking on left or right side
     fileDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    fileDock->setFloating(false);
 
     // 4. Add the dock widget to your main window (on the left)
     addDockWidget(Qt::LeftDockWidgetArea, fileDock);
 
-    fileDock->setFloating(true);
+    fileDock->setFloating(false);
 
 
     // add a hide button
@@ -144,8 +168,13 @@ MainWindow::MainWindow(QWidget *parent)
             ui->projectDock->setFloating(true);
         }
     });
-    connect(ui->actionFolder, &QAction::triggered, this, [this]() {
-        openFolder();
+    connect(ui->actionFile, &QAction::triggered, this, [this]() {
+        MainWindow::openFolder();
+    });
+
+    //quit button
+    connect(ui->actionquit_without_saving, &QAction::triggered, this, [this]() {
+        delete ui;
     });
 
 

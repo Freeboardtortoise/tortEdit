@@ -82,7 +82,7 @@ selection-color: rgb(85, 0, 255);</string>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>17</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -337,7 +337,7 @@ color: rgb(193, 193, 193);</string>
   </action>
   <action name="actionFolder">
    <property name="text">
-    <string>Folder</string>
+    <string>Project</string>
    </property>
   </action>
  </widget>
