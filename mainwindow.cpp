@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QPushButton>
 #include <QSyntaxHighlighter>
+#include <QStandardPaths>
 
 
 #include <QFile>
@@ -98,7 +99,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    highlighter = new MyHighlighter(ui->CodeEditor->document(), "/home/darion/.config/tortedit/themes/dark_theme.json");
+    
+    // Use portable config path instead of hard-coded path
+    QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+    QString themePath = configPath + "/tortedit/themes/dark_theme.json";
+    
+    highlighter = new MyHighlighter(ui->CodeEditor->document(), themePath);
 
 
 
@@ -142,6 +148,8 @@ MainWindow::MainWindow(QWidget *parent)
     QAction* toggleFileDockAction = fileDock->toggleViewAction();
     ui->LeftBar->addAction(toggleFileDockAction);
 
+    projectManager->newOpenInterface();
+
     std::string path = "";
     //opening of files
     connect(fileTreeView, &QTreeView::clicked, this, [this, fileModel](const QModelIndex &index) {
@@ -163,10 +171,7 @@ MainWindow::MainWindow(QWidget *parent)
         saveFile(currentFilePath);
     });
     connect(ui->actionProjectManager, &QAction::triggered, this, [this]() {
-        if (ui->projectDock->isVisible() == false) {
-            ui->projectDock->setVisible(true);
-            ui->projectDock->setFloating(true);
-        }
+        projectManager->newOpenInterface();
     });
     connect(ui->actionFile, &QAction::triggered, this, [this]() {
         MainWindow::openFolder();
@@ -176,6 +181,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionquit_without_saving, &QAction::triggered, this, [this]() {
         delete ui;
     });
+
 
 
 }

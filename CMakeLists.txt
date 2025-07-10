@@ -39,6 +39,7 @@ else()
         add_executable(TortEdit
             ${PROJECT_SOURCES}
             myhighlighter.h myhighlighter.cpp
+            projects.h projects.cpp
         )
     endif()
 endif()

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "myhighlighter.h"
+#include "projects.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -21,12 +22,14 @@ public:
     void loadFile(const QString& filePath);
     void saveFile(const QString& filePath);
     void openFolder();
+    void ProjectManagerOpen();
     QString currentFolderPath;
 
 private:
     Ui::MainWindow *ui;
     QString currentFilePath;
     MyHighlighter *highlighter;
+    Projects *projectManager;
 
 };
 #endif // MAINWINDOW_H
