@@ -98,7 +98,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    highlighter = new MyHighlighter(ui->CodeEditor->document(), "/home/darion/.config/tortedit/themes/dark_theme.json");
+        QString homeDir = QDir::homePath(); // Expands to /home/youruser
+    QString themefile = homeDir + "/.config/TortEdit/theme.json";
+    highlighter = new MyHighlighter(ui->CodeEditor->document(), themefile);
 
 
 

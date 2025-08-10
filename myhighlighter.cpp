@@ -52,12 +52,19 @@ void MyHighlighter::loadThemeFromJson(const QString &filePath)
     QJsonObject obj = doc.object();
 
     QTextCharFormat keywordFmt = createFormat(QColor(obj["keywordColor"].toString()), true);
+    QTextCharFormat ifFormat = createFormat(QColor(obj["ifColor"].toString()), true);
+    QTextCharFormat whileColor = createFormat(QColor(obj["whileColor"].toString()), true);
+    QTextCharFormat forColor = createFormat(QColor(obj["forColor"].toString()), true);
+    QTextCharFormat variableTypes = createFormat(QColor(obj["variableTypes"].toString()), true);
+
     QTextCharFormat stringFmt = createFormat(QColor(obj["stringColor"].toString()));
     QTextCharFormat commentFmt = createFormat(QColor(obj["commentColor"].toString()));
     multiLineCommentFormat = createFormat(QColor(obj["multilineCommentColor"].toString()), false, true);
-
     rules = {
-        { QRegularExpression("\\bint\\b|\\bfloat\\b|\\breturn\\b|\\bif\\b|\\belse\\b"), keywordFmt },
+        { QRegularExpression("if|\\belse\\b"), ifFormat},
+        { QRegularExpression("while"), whileColor},
+        { QRegularExpression("for"), forColor},
+        { QRegularExpression("int|\\bfloat|\\bbool|\\bstring|\\bstd::string")},
         { QRegularExpression("\".*?\""), stringFmt },
         { QRegularExpression("//[^\n]*"), commentFmt }
     };
